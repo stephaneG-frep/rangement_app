@@ -4,15 +4,12 @@ import '../providers/storage_provider.dart';
 import '../widgets/storage_list_item.dart';
 import 'edit_screen.dart';
 
-
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<StorageProvider>();
-
 
     return Scaffold(
       appBar: AppBar(
@@ -37,17 +34,23 @@ class HomeScreen extends StatelessWidget {
       ),
       body: provider.items.isEmpty
           ? const Center(child: Text('Aucun objet enregistré'))
-          : GridView.builder(
-        padding: const EdgeInsets.all(12),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-          childAspectRatio: 1.0,
-        ),
-        itemCount: provider.items.length,
-        itemBuilder: (_, i) => StorageListItem(provider.items[i]),
-      ),
+          : LayoutBuilder(
+              builder: (context, constraints) {
+                final crossAxisCount = constraints.maxWidth > 600 ? 3 : 2;
+                return GridView.builder(
+                  padding: const EdgeInsets.all(12),
+                  physics: const BouncingScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: 0.95,
+                  ),
+                  itemCount: provider.items.length,
+                  itemBuilder: (_, i) => StorageListItem(provider.items[i]),
+                );
+              },
+            ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Ajouter un objet',
         onPressed: () => Navigator.push(

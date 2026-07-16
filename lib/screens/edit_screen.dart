@@ -70,69 +70,78 @@ class _EditScreenState extends State<EditScreen> {
     if (mounted) Navigator.pop(context);
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.item != null;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(isEditing ? 'Modifier' : 'Ajouter'),
-      ),
+      appBar: AppBar(title: Text(isEditing ? 'Modifier' : 'Ajouter')),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: _nameCtrl,
-                  textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(
-                    labelText: 'Nom',
-                    hintText: 'Ex: Clés, Chargeur, Passeport…',
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      TextFormField(
+                        controller: _nameCtrl,
+                        textInputAction: TextInputAction.next,
+                        decoration: const InputDecoration(
+                          labelText: 'Nom',
+                          hintText: 'Ex: Clés, Chargeur, Passeport…',
+                        ),
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) {
+                            return 'Nom requis';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _locationCtrl,
+                        textInputAction: TextInputAction.next,
+                        decoration: const InputDecoration(
+                          labelText: 'Emplacement',
+                          hintText: 'Ex: Entrée, Tiroir, Garage…',
+                        ),
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) {
+                            return 'Emplacement requis';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _noteCtrl,
+                        maxLines: 5,
+                        minLines: 3,
+                        decoration: const InputDecoration(
+                          labelText: 'Note',
+                          hintText: 'Détail rapide (optionnel)',
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.icon(
+                          onPressed: _save,
+                          icon: const Icon(Icons.save),
+                          label: const Text('Enregistrer'),
+                        ),
+                      ),
+                    ],
                   ),
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty) return 'Nom requis';
-                    return null;
-                  },
                 ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _locationCtrl,
-                  textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(
-                    labelText: 'Emplacement',
-                    hintText: 'Ex: Entrée, Tiroir, Garage…',
-                  ),
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty) return 'Emplacement requis';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _noteCtrl,
-                  maxLines: 3,
-                  decoration: const InputDecoration(
-                    labelText: 'Note',
-                    hintText: 'Détail rapide (optionnel)',
-                  ),
-                ),
-                const Spacer(),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton.icon(
-                    onPressed: _save,
-                    icon: const Icon(Icons.save),
-                    label: const Text('Enregistrer'),
-                  ),
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
